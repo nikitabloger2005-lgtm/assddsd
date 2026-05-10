@@ -1,0 +1,7 @@
+services:
+  desktop:
+    build: .
+    ports:
+      - "6080:6080"
+    shm_size: "512mb" # Важно для корректной работы браузеров внутри XFCE
+    restart: unless-stopped
