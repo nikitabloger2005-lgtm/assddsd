@@ -1,26 +1,24 @@
 FROM ubuntu:22.04
 
-# Исключаем интерактивные вопросы при установке
 ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=en_US.UTF-8
 
-# Установка необходимых пакетов
+# Установка XFCE, VNC и зависимостей для noVNC
 RUN apt-get update && apt-get install -y \
     xfce4 xfce4-goodies \
-    tightvncserver \
+    dbus-x11 x11-xserver-utils \
+    tigervnc-standalone-server \
     novnc websockify \
     python3 \
-    git \
-    curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Настройка рабочих директорий
-WORKDIR /root
+# Создаем ссылку для noVNC (в некоторых дистрибутивах пути отличаются)
+RUN ln -s /usr/share/novnc/vnc.html /usr/share/novnc/index.html
 
-# Создаем скрипт запуска
+WORKDIR /root
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Экспортируем порт для noVNC
 EXPOSE 6080
 
 ENTRYPOINT ["/entrypoint.sh"]
